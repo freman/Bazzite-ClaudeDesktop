@@ -176,9 +176,12 @@ info "MCP config written to ${MCP_CONFIG_FILE} (filesystem entry updated; all ot
 header "=== Desktop integration ==="
 
 info "Exporting Claude Desktop app to host..."
-distrobox enter --name "${CONTAINER_NAME}" -- distrobox-export --app claude 2>/dev/null || true
+distrobox enter --name "${CONTAINER_NAME}" -- distrobox-export --app claude-desktop 2>/dev/null || true
 
-DESKTOP_FILE="${HOME}/.local/share/applications/claude.desktop"
+# distrobox-export finds the app by matching the binary name against the
+# in-container .desktop file's Exec= line, but names the exported file after
+# that source .desktop file's own basename (com.anthropic.Claude), not "claude-desktop".
+DESKTOP_FILE="${HOME}/.local/share/applications/${CONTAINER_NAME}-com.anthropic.Claude.desktop"
 if [[ -f "${DESKTOP_FILE}" ]]; then
     # Patch all Exec= lines to prepend Wayland env var (idempotent guard included)
     if ! grep -q "ELECTRON_OZONE_PLATFORM_HINT" "${DESKTOP_FILE}"; then
@@ -190,7 +193,7 @@ if [[ -f "${DESKTOP_FILE}" ]]; then
 else
     warn "Could not find exported .desktop file at ${DESKTOP_FILE}"
     warn "You can export manually by running inside the container:"
-    warn "  distrobox enter --name ${CONTAINER_NAME} -- distrobox-export --app claude"
+    warn "  distrobox enter --name ${CONTAINER_NAME} -- distrobox-export --app claude-desktop"
 fi
 
 # ---------------------------------------------------------------------------

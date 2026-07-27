@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- Switch Claude Desktop install to Anthropic's official APT repo (`downloads.claude.ai`). The community repo (`aaddrick/claude-desktop-debian`) renamed its package to `claude-desktop-unofficial` to avoid clashing with Anthropic's now-official `claude-desktop` package, so `apt-get install claude-desktop` was failing with "package not found"
+- Fix post-install binary check to look for `claude-desktop`, not `claude`
+- Fix desktop-export step: the exported `.desktop` file is named after the container and the in-container file's own basename (`<container>-com.anthropic.Claude.desktop`), not `claude.desktop`, so the Wayland-support patch was silently never applied
+
 ## [0.1.0] - 2026-04-19
 
 ### Added

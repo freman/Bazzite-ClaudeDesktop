@@ -36,7 +36,7 @@ $EDITOR .env
 That's it. The script will:
 
 1. Create an Ubuntu 24.04 Distrobox container named `claude-desktop` with your configured directories mounted
-2. Install Claude Desktop via the [community APT repository](https://github.com/aaddrick/claude-desktop-debian) and its dependencies
+2. Install Claude Desktop via [Anthropic's official APT repository](https://support.claude.com/en/articles/10065433-installing-claude-desktop) and its dependencies
 3. Install Node.js LTS and the MCP filesystem server (`@modelcontextprotocol/server-filesystem`)
 4. Write `~/.config/claude/claude_desktop_config.json` — creating it on first run, updating only the `filesystem` entry on subsequent runs
 5. Export the app to your host desktop (app grid + `.desktop` launcher)

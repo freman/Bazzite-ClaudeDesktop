@@ -4,10 +4,11 @@
 # Safe to re-run for updates.
 set -euo pipefail
 
-# Community-maintained APT repository for Claude Desktop on Linux.
-# Source: https://github.com/aaddrick/claude-desktop-debian
-CLAUDE_APT_KEY_URL="https://aaddrick.github.io/claude-desktop-debian/KEY.gpg"
-CLAUDE_APT_REPO="deb [signed-by=/usr/share/keyrings/claude-desktop.gpg arch=amd64,arm64] https://aaddrick.github.io/claude-desktop-debian stable main"
+# Anthropic's official first-party APT repository for Claude Desktop on Linux.
+# Source: https://support.claude.com/en/articles/10065433-installing-claude-desktop
+CLAUDE_APT_KEY_URL="https://downloads.claude.ai/claude-desktop/key.asc"
+CLAUDE_APT_KEYRING="/usr/share/keyrings/claude-desktop-archive-keyring.asc"
+CLAUDE_APT_REPO="deb [signed-by=${CLAUDE_APT_KEYRING}] https://downloads.claude.ai/claude-desktop/apt/stable stable main"
 
 NODE_MIN_VERSION=18
 
@@ -28,7 +29,6 @@ sudo apt-get install -y --no-install-recommends \
     wget \
     curl \
     ca-certificates \
-    gnupg \
     git \
     libasound2t64 \
     libatk1.0-0 \
@@ -56,8 +56,7 @@ sudo apt-get install -y --no-install-recommends \
 # 3. Add Claude Desktop APT repository (idempotent)
 # ---------------------------------------------------------------------------
 info "Adding Claude Desktop APT repository..."
-curl -fsSL "${CLAUDE_APT_KEY_URL}" \
-    | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/claude-desktop.gpg
+sudo curl -fsSLo "${CLAUDE_APT_KEYRING}" "${CLAUDE_APT_KEY_URL}"
 
 echo "${CLAUDE_APT_REPO}" \
     | sudo tee /etc/apt/sources.list.d/claude-desktop.list > /dev/null
@@ -69,7 +68,7 @@ sudo apt-get update -qq
 # ---------------------------------------------------------------------------
 info "Installing Claude Desktop..."
 sudo apt-get install -y claude-desktop
-info "Claude Desktop installed: $(command -v claude || echo 'binary not in PATH — check /opt or /usr/bin')"
+info "Claude Desktop installed: $(command -v claude-desktop || echo 'binary not in PATH — check /opt or /usr/bin')"
 
 # ---------------------------------------------------------------------------
 # 5. Install Node.js LTS (required for MCP server)
